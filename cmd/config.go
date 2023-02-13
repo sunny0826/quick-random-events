@@ -17,29 +17,63 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/spf13/viper"
+	"gopkg.in/yaml.v3"
+	"io/ioutil"
+	"os"
+	"os/exec"
 
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
-// configCmd represents the config command
 var configCmd = &cobra.Command{
 	Use:   "config",
-	Short: "View or modify the quick random events configuration file",
+	Short: "Manage the configuration of the quick-random-events tool",
+	Long:  `This command allows you to show, edit, and manage the configuration of the quick-random-events tool`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("config called")
+		b, err := ioutil.ReadFile(viper.ConfigFileUsed())
+		if err != nil {
+			fmt.Println("Error reading config file:", err)
+			return
+		}
+		yamlData, err := yaml.Marshal(string(b))
+		if err != nil {
+			fmt.Println("Error reading config file:", err)
+			return
+		}
+		color.Cyan(string(yamlData))
+	},
+}
+
+var editCmd = &cobra.Command{
+	Use:   "edit",
+	Short: "Edit the current configuration",
+	Long:  `This subcommand opens the configuration file in the default text editor for you to make changes`,
+	Run: func(cmd *cobra.Command, args []string) {
+		editor := os.Getenv("EDITOR")
+		if editor == "" {
+			editor = "vi"
+			fmt.Println("$EDITOR environment variable not set, defaulting to vi")
+		}
+
+		err := runEditor(editor, viper.ConfigFileUsed())
+		if err != nil {
+			fmt.Println("Error running editor:", err)
+		}
 	},
 }
 
 func init() {
+	configCmd.AddCommand(editCmd)
 	rootCmd.AddCommand(configCmd)
+}
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// configCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// configCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+func runEditor(editor, filePath string) error {
+	args := []string{filePath}
+	cmd := exec.Command(editor, args...)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }

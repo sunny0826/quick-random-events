@@ -42,7 +42,7 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.quick-random-events.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/quick-random-events/config.yaml)")
 }
 
 func initConfig() {
@@ -55,9 +55,9 @@ func initConfig() {
 		cobra.CheckErr(err)
 
 		// Search config in home directory with name ".cobra" (without extension).
-		viper.AddConfigPath(home)
+		viper.AddConfigPath(home + "/.config/quick-random-events")
 		viper.SetConfigType("yaml")
-		viper.SetConfigName(".quick-random-events")
+		viper.SetConfigName("config")
 	}
 
 	viper.AutomaticEnv()
