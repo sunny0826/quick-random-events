@@ -27,7 +27,7 @@ var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "quick-random-events",
+	Use:   "qres",
 	Short: "Quickly generate a random result based on a configuration file",
 }
 

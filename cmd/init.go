@@ -79,6 +79,10 @@ func init() {
 	rootCmd.AddCommand(initCmd)
 
 	homeDir, _ := os.UserHomeDir()
-	defaultConfigPath := filepath.Join(homeDir, ".config", "quick-random-events", "config.yaml")
+	configPath := filepath.Join(homeDir, ".config", "quick-random-events")
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		os.MkdirAll(configPath, os.ModePerm)
+	}
+	defaultConfigPath := filepath.Join(configPath, "config.yaml")
 	initCmd.Flags().String("config", defaultConfigPath, "Path to the config file")
 }
