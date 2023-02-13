@@ -16,7 +16,10 @@ limitations under the License.
 package cmd
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
@@ -24,22 +27,58 @@ import (
 // initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "Initialize the quick random events configuration file",
+	Short: "Create a sample config file",
+	Long:  `Create a sample config file that contains a list of activities and foods`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("init called")
+		configPath, _ := cmd.Flags().GetString("config")
+		if _, err := os.Stat(configPath); err == nil {
+			fmt.Printf("The config file already exists at %s\n", configPath)
+			return
+		}
+
+		file, err := os.Create(configPath)
+		if err != nil {
+			fmt.Printf("Error creating config file: %s\n", err)
+			return
+		}
+		defer file.Close()
+
+		writer := bufio.NewWriter(file)
+		defer writer.Flush()
+
+		sampleConfig := `
+activities:
+- name: Visit the Museum
+  description: Take a tour of the local museum
+  weight: 10
+
+- name: Go Hiking
+  description: Explore the local mountains
+  weight: 5
+
+foods:
+- name: Sushi
+  description: Enjoy some Japanese cuisine
+  weight: 15
+
+- name: Italian Food
+  description: Try some delicious pasta and pizza
+  weight: 8
+`
+		_, err = writer.WriteString(sampleConfig)
+		if err != nil {
+			fmt.Printf("Error writing to config file: %s\n", err)
+			return
+		}
+
+		fmt.Printf("Sample config file created at %s\n", configPath)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(initCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// initCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// initCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	homeDir, _ := os.UserHomeDir()
+	defaultConfigPath := filepath.Join(homeDir, ".config", "quick-random-events", "config.yaml")
+	initCmd.Flags().String("config", defaultConfigPath, "Path to the config file")
 }
