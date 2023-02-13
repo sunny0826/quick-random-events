@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
-	"io/ioutil"
 	"os"
 	"os/exec"
 
@@ -32,7 +31,7 @@ var configCmd = &cobra.Command{
 	Short: "Manage the configuration of the quick-random-events tool",
 	Long:  `This command allows you to show, edit, and manage the configuration of the quick-random-events tool`,
 	Run: func(cmd *cobra.Command, args []string) {
-		b, err := ioutil.ReadFile(viper.ConfigFileUsed())
+		b, err := os.ReadFile(viper.ConfigFileUsed())
 		if err != nil {
 			fmt.Println("Error reading config file:", err)
 			return

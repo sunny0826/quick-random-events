@@ -46,24 +46,25 @@ var initCmd = &cobra.Command{
 		writer := bufio.NewWriter(file)
 		defer writer.Flush()
 
-		sampleConfig := `
-activities:
-- name: Visit the Museum
-  description: Take a tour of the local museum
-  weight: 10
-
-- name: Go Hiking
-  description: Explore the local mountains
-  weight: 5
-
-foods:
-- name: Sushi
-  description: Enjoy some Japanese cuisine
-  weight: 15
-
-- name: Italian Food
-  description: Try some delicious pasta and pizza
-  weight: 8
+		sampleConfig := `events:
+- name: Activities
+  description: Things to do
+  list:
+  - name: Visit the Museum
+    description: Take a tour of the local museum
+    weight: 10	
+  - name: Go Hiking
+    description: Explore the local mountains
+    weight: 5
+- name: Foods
+  description: Things to eat
+  list:	
+  - name: Sushi
+    description: Enjoy some Japanese cuisine
+    weight: 15	
+  - name: Italian Food
+    description: Try some delicious pasta and pizza
+    weight: 8
 `
 		_, err = writer.WriteString(sampleConfig)
 		if err != nil {
