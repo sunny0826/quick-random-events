@@ -17,16 +17,31 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/fatih/color"
+	"runtime"
 
 	"github.com/spf13/cobra"
+)
+
+var (
+	Version   = "dev"
+	Commit    = "none"
+	BuildDate = "unknown"
+	GoVersion = runtime.Version()
+	OSArch    = "unknown"
 )
 
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Print version of quick-random-events",
+	Short: "Print the version number of Quick Random Events",
+	Long:  `All software has versions. This is Quick Random Events's`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("version called")
+		fmt.Printf("Version: %s\n", color.GreenString(Version))
+		fmt.Printf("Commit: %s\n", color.GreenString(Commit))
+		fmt.Printf("Date: %s\n", color.GreenString(BuildDate))
+		fmt.Printf("Go Version: %s\n", color.GreenString(GoVersion))
+		fmt.Printf("OS/Arch: %s\n", color.GreenString(OSArch))
 	},
 }
 
