@@ -1,7 +1,7 @@
 project_name: quick-random-events
 builds:
-  - id: qre
-    main: ./cmd/qre/main.go
+  - id: qres
+    main: .
     binary: qres
     goos:
       - windows
@@ -14,7 +14,7 @@ builds:
 archives:
   - id: default
     builds:
-      - qre
+      - qres
     format_overrides:
       - goos: windows
         format: zip
